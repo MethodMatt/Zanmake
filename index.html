@@ -1,5 +1,5 @@
 <!DOCTYPE html><!--  This site was created in Webflow. http://www.webflow.com  -->
-<!--  Last Published: Thu Feb 10 2022 11:10:28 GMT+0000 (Coordinated Universal Time)  -->
+<!--  Last Published: Fri Feb 11 2022 09:34:41 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="60f9252faae03d47d2dc7a5d" data-wf-site="60f9252eaae03d2c17dc7a59">
 <head>
   <meta charset="utf-8">
@@ -175,4 +175,42 @@
     ahoy.trackSubmits();
   }
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/ahoy.js@0.3.4/dist/ahoy.min.js" async="" defer="" onload="configureAhoy()"></body></html></script></body></html>
+  <script src="https://cdn.jsdelivr.net/npm/ahoy.js@0.3.4/dist/ahoy.min.js" async="" defer="" onload="configureAhoy()">
+   <script type="text/javascript">
+ //apply only to forms with the action pointing to Basin
+ $('form[action^="https://usebasin.com"]').each(function(i,el){
+   form = $(el);
+   form.submit(function(e){
+     //stop the form from submitting
+     e.preventDefault();
+     form = $(e.target);
+     //get the form's action parameter and add ".json" to the end
+     action = form.attr('action') + '.json';
+     //submit the form via ajax
+     $.ajax({
+       url: action,
+       method: "POST",
+       data: form.serialize(),
+       dataType: "json",
+       success: function(data){
+         if(data.success){
+           //successful submission - hide the form and show the success message
+           parent = $(form.parent());
+           parent.children('form').css('display','none');
+           parent.children('.w-form-done').css('display','block');
+         } else {
+           //failed submission - log the output to the console and show the failure message
+           console.log(data);
+           parent.find('.w-form-fail').css('display','block');
+         }
+       },
+       error: function(){
+         //failed submission - show the failure message
+         parent.find('.w-form-fail').css('display','block');
+       }
+     });
+   });
+ });
+ </script>
+</body>
+</html>
